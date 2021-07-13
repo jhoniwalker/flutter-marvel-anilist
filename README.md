@@ -25,9 +25,9 @@ Luego completar el archivo con las claves obtenidas de la [api de Marvel](https:
 # Screens
 
 <p float="left">
-  <img src="https://user-images.githubusercontent.com/4073607/125515308-d4f57957-4563-469c-850a-d225f1687826.png" width="100" />
-  <img src="https://user-images.githubusercontent.com/4073607/125515351-759ec99c-745e-490a-812c-cb2ec0deecc2.png" width="100" /> 
-  <img src="https://user-images.githubusercontent.com/4073607/125515471-888fc505-b413-4149-8b96-be79e93efe44.png" width="100" />
+  <img src="https://user-images.githubusercontent.com/4073607/125515308-d4f57957-4563-469c-850a-d225f1687826.png" width="300" />
+  <img src="https://user-images.githubusercontent.com/4073607/125515351-759ec99c-745e-490a-812c-cb2ec0deecc2.png" width="300" /> 
+  <img src="https://user-images.githubusercontent.com/4073607/125515471-888fc505-b413-4149-8b96-be79e93efe44.png" width="300" />
 </p>
 
 
