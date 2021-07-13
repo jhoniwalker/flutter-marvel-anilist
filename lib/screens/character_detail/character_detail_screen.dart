@@ -1,11 +1,11 @@
 import 'package:actividad_05/models/character.dart';
-import 'package:actividad_05/models/thumbnail.dart';
+//import 'package:actividad_05/models/thumbnail.dart';
 import 'package:actividad_05/screens/character_detail/character_releated_content.dart';
 import 'package:actividad_05/services/favourites_service.dart';
-import 'package:actividad_05/services/marvel_api_service.dart';
+//import 'package:actividad_05/services/marvel_api_service.dart';
 import 'package:actividad_05/widgets/attribution.dart';
 import 'package:actividad_05/widgets/detail_hero_with_back_btn.dart';
-import 'package:actividad_05/widgets/labeled_image_list.dart';
+//import 'package:actividad_05/widgets/labeled_image_list.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -18,7 +18,7 @@ class CharacterDetailScreen extends StatefulWidget {
 }
 
 class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
-  List<dynamic> favouritedCharacterIds = [];
+  List<dynamic> favouritedCharacters = [];
   List<int> favouritedCharacterIdsSqlite = [];
 
   toggleFavouriteSqlite(Character character) => () async {
@@ -45,12 +45,21 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     }
   }
 
-  toggleFavourite(int characterId) => () async {
+  toggleFavourite(Character character) => () async {
         setState(() {
-          if (favouritedCharacterIds.indexOf(characterId) >= 0) {
-            favouritedCharacterIds.remove(characterId);
+          if (favouritedCharacters.firstWhere(
+                  (itemToCheck) => itemToCheck['id'] == character.id,
+                  orElse: () => null) !=
+              null) {
+            favouritedCharacters
+                .removeWhere((item) => item['id'] == character.id);
           } else {
-            favouritedCharacterIds.add(characterId);
+            favouritedCharacters.add({
+              'id': character.id,
+              'name': character.name,
+              'description': character.description,
+              'thumbnail': character.thumbnail,
+            });
           }
         });
 
@@ -61,17 +70,26 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
 
           print('From sharedProps $favouriteCharacters');
 
-          List<dynamic> favouriteCharactersIds =
+          List<dynamic> favouriteCharacterList =
               json.decode(favouriteCharacters);
 
-          if (favouriteCharactersIds.indexOf(characterId) >= 0) {
-            favouriteCharactersIds.remove(characterId);
+          if (favouriteCharacterList.firstWhere(
+                  (itemToCheck) => itemToCheck['id'] == character.id,
+                  orElse: () => null) !=
+              null) {
+            favouriteCharacterList
+                .removeWhere((item) => item['id'] == character.id);
           } else {
-            favouriteCharactersIds.add(characterId);
+            favouriteCharacterList.add({
+              'id': character.id,
+              'name': character.name,
+              'description': character.description,
+              'thumbnail': character.thumbnail,
+            });
           }
 
           await prefs.setString(
-              'favouriteCharacters', json.encode(favouriteCharactersIds));
+              'favouriteCharacters', json.encode(favouriteCharacterList));
         } catch (e) {
           print('Err $e');
           SharedPreferences.setMockInitialValues({});
@@ -87,7 +105,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
 
       print('From INIT STATE $characterFavourites');
       setState(() {
-        favouritedCharacterIds = characterFavourites;
+        favouritedCharacters = characterFavourites;
       });
     } catch (e) {
       print('Err $e');
@@ -99,12 +117,21 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   void initState() {
     super.initState();
     getFavouriteCharacters();
-    getFavouriteCharactersSqlite();
+    //getFavouriteCharactersSqlite();
   }
 
   @override
   Widget build(BuildContext context) {
     final character = ModalRoute.of(context).settings.arguments as Character;
+
+    final star = Container(
+      margin: EdgeInsets.only(top: 5.0, right: 3.0, bottom: 5.0),
+      child: Icon(Icons.star, color: Color(0xFFf2C611), size: 40.0),
+    );
+    final starHalf = Container(
+      margin: EdgeInsets.only(top: 5.0, right: 3.0, bottom: 5.0),
+      child: Icon(Icons.star_half, color: Color(0xFFf2C611), size: 40.0),
+    );
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -116,10 +143,11 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             children: [
               IconButton(
                 onPressed:
-                    toggleFavourite(character != null ? character.id : 0),
-                icon: (favouritedCharacterIds
-                            .indexOf(character != null ? character.id : 0) >=
-                        0)
+                    toggleFavourite(character != null ? character : null),
+                icon: (favouritedCharacters.firstWhere(
+                            (itemToCheck) => itemToCheck['id'] == character.id,
+                            orElse: () => null) !=
+                        null)
                     ? Icon(Icons.favorite)
                     : Icon(Icons.favorite_outline),
                 iconSize: 40.0,
@@ -155,12 +183,10 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 12.0),
-              Text(
-                '⭐ ⭐ ⭐ ⭐ ⭐',
-                style: TextStyle(fontSize: 25.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [star, star, star, star, starHalf],
               ),
-              SizedBox(height: 15.0),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 15.0),
                 height: 120.0,
